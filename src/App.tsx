@@ -1,13 +1,22 @@
-import React, {useState} from 'react';
+import React, {useReducer, useState} from 'react';
 import './App.css';
 import {Todolist} from './Todolist';
 import { v1 } from 'uuid';
+import {addTaskAC, removeTaskAC, tasksReducer} from "./reducers/tasksReducer";
+import {changeFilterAC, filterReducer} from "./reducers/FilterReducer";
 
 export type FilterValuesType = "all" | "active" | "completed";
 
 function App() {
 
-    let [tasks, setTasks] = useState([
+    // let [tasks, setTasks] = useState([
+    //     { id: v1(), title: "HTML&CSS", isDone: true },
+    //     { id: v1(), title: "JS", isDone: true },
+    //     { id: v1(), title: "ReactJS", isDone: false },
+    //     { id: v1(), title: "Rest API", isDone: false },
+    //     { id: v1(), title: "GraphQL", isDone: false },
+    // ]);
+    let [tasks, dispatchTasks] = useReducer(tasksReducer,[
         { id: v1(), title: "HTML&CSS", isDone: true },
         { id: v1(), title: "JS", isDone: true },
         { id: v1(), title: "ReactJS", isDone: false },
@@ -16,17 +25,19 @@ function App() {
     ]);
 
     function removeTask(id: string) {
-        let filteredTasks = tasks.filter(t => t.id != id);
-        setTasks(filteredTasks);
+        // let filteredTasks = tasks.filter(t => t.id != id);
+        // setTasks(filteredTasks);
+        dispatchTasks(removeTaskAC(id))
     }
 
     function addTask(title: string) {
-        let task = { id: v1(), title: title, isDone: false };
-        let newTasks = [task, ...tasks];
-        setTasks(newTasks);
+        // let task = { id: v1(), title: title, isDone: false };
+        // let newTasks = [task, ...tasks];
+        // setTasks(newTasks);
+        dispatchTasks(addTaskAC(title))
     }
 
-    let [filter, setFilter] = useState<FilterValuesType>("all");
+    let [filter, dispatchFilter] = useReducer( filterReducer,"all");
 
     let tasksForTodolist = tasks;
 
@@ -38,7 +49,7 @@ function App() {
     }
 
     function changeFilter(value: FilterValuesType) {
-        setFilter(value);
+        dispatchFilter(changeFilterAC(value));
     }
 
 
